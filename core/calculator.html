@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор мягкой мебели</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #8e616d; /* Grey */
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: #d4acbc;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(100, 0, 0, 0.2);
+            max-width: 800px;
+            width: 100%;
+            margin: auto;
+        }
+        .logo {
+            width: 250px; /* Adjust width as needed */
+            height: auto;  /* Maintain aspect ratio */
+            margin-right: 20px; /* Add space between logo and heading */
+            margin-bottom: px; /* Add space between logo and form */
+        }
+
+        h1 {
+            text-align: center;
+            color: #603940; /* Dark Orange */
+            margin-bottom: 20px; /* Increased margin */
+            font-size: 2.5em; /* Larger heading */
+        }
+
+        form {
+            display: grid;
+            gap: 15px; /* Increased gap */
+        }
+
+        label {
+            font-weight: bold;
+            color: #603940; /* Dark Orange */
+            margin-bottom: 10px;
+        }
+
+        input, select {
+            padding: 15px; /* Increased padding */
+            border: 1px solid #603940; /* Dark Orange border */
+            border-radius: 12px;
+            font-size: 18px;
+            width: calc(100% - 4px); /* Adjust for border */
+            box-sizing: border-box;
+        }
+
+
+        button {
+            background-color: #8e616d; /* Dark Orange */
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #603940; /* Crimson Red */
+        }
+
+        .result {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #603940; /* Crimson Red */
+        }
+
+        button[onclick="openModal()"] {
+            background-color: #8e616d; /* Orange */
+            border: 2px solid #603940; /* Dark Orange border */
+            margin-top: 20px;
+        }
+
+        button[onclick="openModal()"]:hover {
+            background-color: #8e616d; /* Dark Orange */
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        .modal-content {
+            background-color: #ecbcd4;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%;
+            box-shadow: 0 4px 8px rgba(50, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+        }
+
+        .close {
+            color: black;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: red;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>Калькулятор мягкой мебели<img
+src="https://cdn.onlinewebfonts.com/svg/img_539231.png"
+alt="Company Logo" class="logo"></h1>
+
+    <form method="POST" action="/calculate">
+
+        <label for="type1">Выберите вид мягкой мебели:</label>
+        <select id="type1" name="type1" required>
+            <option value="20" {% if type1 == 10 %}selected{% endif %}>Угловой диван</option>
+            <option value="60" {% if type1 == 20 %}selected{% endif %}>Диван с оттоманкой</option>
+            <option value="10" {% if type1 == 30 %}selected{% endif %}>Прямой диван</option>
+            <option value="40" {% if type1 == 40 %}selected{% endif %}>Модульный диван</option>
+	        <option value="50" {% if type1 == 50 %}selected{% endif %}>Полукруглый диван</option>
+	        <option value="25" {% if type1 == 25 %}selected{% endif %}>Кровать</option>
+        </select>
+
+        <label for="height">Высота (мм):</label>
+        <input type="number" id="height" name="height" value="{{ height or '' }}" required>
+
+        <label for="width">Ширина (мм):</label>
+        <input type="number" id="width" name="width" value="{{ width or '' }}" required>
+
+    	<label for="depth">Глубина (мм):</label>
+        <input type="number" id="depth" name="depth" value="{{ depth or '' }}" required>
+
+
+        <label for="discount">Скидка (%):</label>
+        <select id="discount" name="discount" required>
+            <option value="0" {% if discount == 0 %}selected{% endif %}>Без скидки</option>
+            <option value="5" {% if discount == 5 %}selected{% endif %}>5%</option>
+            <option value="10" {% if discount == 10 %}selected{% endif %}>10%</option>
+            <option value="15" {% if discount == 15 %}selected{% endif %}>15%</option>
+        </select>
+
+        <button type="submit">Рассчитать стоимость</button>
+    </form>
+
+    {% if total_cost is not none %}
+        <div class="result">
+            <p>Стоимость: {{ total_cost }} руб.</p>
+        </div>
+    {% endif %}
+
+    <!-- Кнопка для отображения модального окна -->
+    <div style="text-align: center; margin-top: 20px;">
+        <button type="button" onclick="openModal()" style="background-color: #8e616d;">О разработчиках</button>
+    </div>
+
+    <!-- Модальное окно -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>О разработчиках</h2>
+                <li><strong>Проект:</strong> Калькулятор стоимости мягкой мебели</li>
+                <li><strong>Год:</strong> 2024</li>
+                <li><strong>Разработчики:</strong></li>
+                <li> Ямалетдинова И.И.</li>
+                <li> Сафина Д.Ф.</li>
+                <li> Шарипова А.И.</li>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openModal() {
+        document.getElementById("aboutModal").style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("aboutModal").style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        var modal = document.getElementById("aboutModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
+</body>
+</html>
